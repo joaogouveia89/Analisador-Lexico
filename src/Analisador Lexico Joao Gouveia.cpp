@@ -16,6 +16,7 @@ int main(int argc, char* argv[]) {
 
 	std::string line;
 	int numeroLinha = 1;
+	int estado;
 
 	// checando argumentos(argv)
 	if(!checarArgumentos(argc, argv)){
@@ -31,8 +32,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	while (std::getline(fonte, line)){
-		if(!AnalisadorLexico::analisar_linha(line)){
-			std::cout<<"Erro na linha " << numeroLinha << std::endl;
+		estado = AnalisadorLexico::analisar_linha(line);
+		if(estado != 30){
+			std::cout<<"Erro no estado " << estado << std::endl;
 		}
 		numeroLinha++;
 	}
