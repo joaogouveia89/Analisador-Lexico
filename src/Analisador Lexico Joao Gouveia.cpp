@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	while (std::getline(fonte, line)){
-		if(!analisar_linha(line)){
+		if(!AnalisadorLexico::analisar_linha(line)){
 			std::cout<<"Erro na linha " << numeroLinha << std::endl;
 		}
 		numeroLinha++;

@@ -10,10 +10,12 @@
 
 #include<string>
 
-
-bool analisar_linha(std::string linha){
-	return true;
-}
-
+class AnalisadorLexico{
+public:
+	AnalisadorLexico(){}
+	static bool analisar_linha(std::string linha){
+		return true;
+	}
+};
 
 #endif /* ANALISADOR_SINTATICO_H_ */
