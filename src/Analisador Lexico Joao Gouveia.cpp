@@ -33,9 +33,7 @@ int main(int argc, char* argv[]) {
 
 	while (std::getline(fonte, line)){
 		estado = AnalisadorLexico::analisar_linha(line);
-		if(estado != 30){
-			std::cout<<"Erro no estado " << estado << std::endl;
-		}
+		std::cout<<"parou no estado = " << estado << std::endl;
 		numeroLinha++;
 	}
 	std::cout<<"Fim da analise lexica!"<<std::endl;

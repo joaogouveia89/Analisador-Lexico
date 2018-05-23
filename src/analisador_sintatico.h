@@ -15,12 +15,33 @@ private:
 	const std::string op = "+-*:";
 	const std::string num = "0123456789";
 	const std::string letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	static bool isLetra(char c){
+		if((int(c) > 64  && int(c) < 91) || (int(c) > 96  && int(c) < 123))
+			return true;
+		return false;
+	}
+
+	static bool isNumero(char c){
+		if(int(c) > 47  && int(c) < 58)
+			return true;
+		return false;
+	}
+
+	static bool isOperador(char c){
+		if(c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '>' || c == '<' || c == '(' || c == ')' || c == '{' || c == '}')
+			return true;
+		return false;
+	}
+
 public:
 	AnalisadorLexico(){}
 	static int analisar_linha(std::string linha){
 		int estado = 0 /* iniciando o estado do automato com 0 */;
-		int indexador = 0;
-		while(estado != 30){
+		int estadoAnterior;
+		unsigned int indexador = 0;
+		while(indexador < linha.size()){
+			estadoAnterior = estado;
 			switch(estado){
 			case 0:
 				while(linha.at(indexador) == ' '){
@@ -29,43 +50,62 @@ public:
 				if(linha.at(indexador) == '/'){
 					indexador++;
 					estado = 1;
+				}else if(isLetra(linha.at(indexador)) == true){
+					estado = 6;
 				}
 				break;
 			case 1:
 				if(linha.at(indexador) == '*'){
 					indexador++;
 					estado = 2;
-				}else{
-					return estado;
+				}else if(linha.at(indexador) == '/'){
+					indexador++;
+					estado = 4;
 				}
 				break;
 			case 2:
-				while(linha.at(indexador) != '*'){
-					indexador++;
-				}
 				if(linha.at(indexador) == '*'){
 					indexador++;
 					estado = 3;
 				}else{
-					return 2;
+					indexador++;
+					estado = 2;
 				}
 				break;
 			case 3:
-				while(linha.at(indexador) == '*'){
+				if(linha.at(indexador) == '/'){
+					estado = 0;
 					indexador++;
-				}
-				if((linha.at(indexador) != '*') && (linha.at(indexador) != '/')){
+				}else if(linha.at(indexador) == '*'){
+					estado = 3;
+					indexador++;
+				}else{
 					indexador++;
 					estado = 2;
-				}else if((linha.at(indexador) == '/')){
-					indexador++;
-					estado = 0;
-				}else{
-					return 3;
 				}
 				break;
+			case 4:
+				indexador++;
+				break;
+
+			case 6:
+				while(linha.at(indexador) == ' ' || isLetra(linha.at(indexador))){
+					indexador++;
+				}
+				if(isNumero(linha.at(indexador))){
+					estado = 7;
+				}else if(linha.at(indexador) == '/'){
+					estado = 1;
+				}else if(isOperador(linha.at(indexador))){
+					estado = 8;
+				}
+				indexador++;
+				break;
+			};
+			if(estado == estadoAnterior){
+				break;
 			}
-		};
+		}
 		return estado;
 	}
 };

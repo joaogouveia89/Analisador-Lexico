@@ -1,0 +1,18 @@
+b = espaço em branco
+l = letra
+n = numero
+qoc = qualquer coisa
+op = operadores + - * / =
+estado 5 = erro
+
+0 -> b0 | /1 | y | n5 | op5 | l6
+1 -> *2 | /4
+2 -> *3 | qoc2
+3 -> /0 | *3 | qoc2
+4 -> y 
+5 -> qoc5
+6 -> b6 | l6 | =7
+7 -> =8 | l9 | n9 | b10
+8 -> =9 | l10 | n10 | b8
+9 -> y
+10
