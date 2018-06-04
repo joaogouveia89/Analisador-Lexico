@@ -40,6 +40,18 @@ public:
 		return false;
 	}
 
+	static bool hasKeywords(std::string linha){
+		if(linha.find("int ") == linha.npos &&
+				linha.find("float ") == linha.npos &&
+				linha.find("double ") == linha.npos &&
+				linha.find("char ") == linha.npos &&
+				linha.find("for ") == linha.npos &&
+				linha.find("if ") == linha.npos &&
+				linha.find("while ") == linha.npos)
+					return false;
+		return true;
+	}
+
 	static int analisar_linha(std::string linha){
 			int estado = 0 /* iniciando o estado do automato com 0 */;
 			unsigned int indexador = 0;

@@ -35,7 +35,11 @@ int main(int argc, char* argv[]) {
 	while (std::getline(fonte, line)){
 		estado = AnalisadorLexico::analisar_linha(line);
 		if(AnalisadorLexico::is_estado_final(estado)){
-			std::cout<<"Linha "<<numeroLinha<<" ok!"<<std::endl;
+			if(AnalisadorLexico::hasKeywords(line)){
+				std::cout<<"Linha "<<numeroLinha<<" tem palavras chave!"<<std::endl;
+			}else{
+				std::cout<<"Linha "<<numeroLinha<<" ok!"<<std::endl;
+			}
 		}else{
 			std::cout<<"Problemas na linha "<< numeroLinha<<std::endl;
 		}
