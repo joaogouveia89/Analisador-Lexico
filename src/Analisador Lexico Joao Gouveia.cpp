@@ -34,12 +34,12 @@ int main(int argc, char* argv[]) {
 
 	while (std::getline(fonte, line)){
 		estado = AnalisadorLexico::analisar_linha(line);
-		std::cout<<"parou no estado = " << estado << std::endl;
 		if(AnalisadorLexico::is_estado_final(estado)){
-			std::cout<<"Linha ok!"<<std::endl;
+			std::cout<<"Linha "<<numeroLinha<<" ok!"<<std::endl;
 		}else{
 			std::cout<<"Problemas na linha "<< numeroLinha<<std::endl;
 		}
+		std::cout<<"	parou no estado = " << estado << std::endl;
 		numeroLinha++;
 	}
 	std::cout<<"Fim da analise lexica!"<<std::endl;
