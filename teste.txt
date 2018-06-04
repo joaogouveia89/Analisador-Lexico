@@ -3,12 +3,12 @@ valor = valor * 2a
 v = 5 + 2
 6 = 3 + 12
 v = v /*aaa***/ + 2 = v ++ 1
-/*aaa***/ v = 5 / v + 2
+/*aaa***/ v = 5 : v + 2
 //   aaa   v + 2
 v =    /*aaa***/ v + 2
 v =     v /*aaa***/ + 2
 v = v + 2 = v ++ 1
-v =     v  + /*aaa***/ + 2 (problemas)
+v =     v  + /*aaa***/ + 2
 v =     v + 2    /*aaa***/
 v === + 3 -5 * 4
 v =    v ++ 2

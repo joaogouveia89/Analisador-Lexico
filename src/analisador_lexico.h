@@ -7,6 +7,7 @@
 
 #ifndef ANALISADOR_LEXICO_H_
 #define ANALISADOR_LEXICO_H_
+#define ERRO -1
 
 #include<string>
 
@@ -25,7 +26,7 @@ private:
 	}
 
 	static bool isOperador(char c){
-		if(c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '>' || c == '<' || c == '(' || c == ')' || c == '{' || c == '}')
+		if(c == '+' || c == '-' || c == '*' || c == ':')
 			return true;
 		return false;
 	}
@@ -34,7 +35,7 @@ public:
 	AnalisadorLexico(){}
 
 	static bool is_estado_final(int estado){
-		if(estado == 0 || estado == 4 || estado == 7 || estado == 11)
+		if(estado == 0 || estado == 15 || estado == 16 || estado == 17 || estado == 25)
 			return true;
 		return false;
 	}
@@ -47,159 +48,285 @@ public:
 					break;
 				}
 				switch(estado){
+				case ERRO:
+					indexador++;
+					break;
 				case 0:
-					while(indexador < linha.size() && linha.at(indexador) == ' '){
-						indexador++;
+					if(linha.at(indexador) == '/'){
+						estado = 1;
+					}else if(linha.at(indexador) == ' '){
+						estado = 0;
+					}else if(isLetra(linha.at(indexador))){
+						estado = 4;
+					}else{
+						estado = ERRO;
 					}
-					if(indexador < linha.size()){
-						if(linha.at(indexador) == '/'){
-							indexador++;
-							estado = 1;
-						}else if(isLetra(linha.at(indexador)) == true){
-							estado = 6;
-							indexador++;
-						}
-						else{
-							estado = 5;
-						}
-					}
+					indexador++;
 					break;
 				case 1:
 					if(linha.at(indexador) == '*'){
-						indexador++;
 						estado = 2;
 					}else if(linha.at(indexador) == '/'){
-						indexador++;
-						estado = 4;
+						estado = 25;
+					}else{
+						estado = ERRO;
 					}
+					indexador++;
 					break;
 				case 2:
-					while(indexador < linha.size() && linha.at(indexador) == ' '){
-						indexador++;
+					if(linha.at(indexador) == '*'){
+						estado = 3;
 					}
-					if(indexador < linha.size()){
-						if(linha.at(indexador) == '*'){
-							indexador++;
-							estado = 3;
-						}else{
-							indexador++;
-							estado = 2;
-						}
-					}
-
+					indexador++;
 					break;
 				case 3:
-					if(linha.at(indexador) == '/'){
-						estado = 0;
-						indexador++;
-					}else if(linha.at(indexador) == '*'){
+					if(linha.at(indexador) == '*'){
 						estado = 3;
-						indexador++;
+					}else if(linha.at(indexador) == '/'){
+						estado = 0;
 					}else{
-						indexador++;
 						estado = 2;
 					}
+					indexador++;
 					break;
 				case 4:
+					if(isLetra(linha.at(indexador)) || isNumero(linha.at(indexador))){
+						estado = 4;
+					}else if(linha.at(indexador) == '/'){
+						estado = 5;
+					}else if(linha.at(indexador) == ' '){
+						estado = 9;
+					}else if(linha.at(indexador) == '='){
+						estado = 10;
+					}else{
+						estado = ERRO;
+					}
 					indexador++;
 					break;
 				case 5:
+					if(linha.at(indexador) == '*'){
+						estado = 6;
+					}else if(linha.at(indexador) == '/'){
+						estado = 25;
+					}else{
+						estado = ERRO;
+					}
 					indexador++;
 					break;
 				case 6:
-					while(indexador < linha.size() && (linha.at(indexador) == ' ')){
-						indexador++;
-					}
-
-					if(indexador < linha.size()){
-						if(isNumero(linha.at(indexador)) || isLetra(linha.at(indexador))){
-							estado = 7;
-						}else if(linha.at(indexador) == '/'){
-							estado = 1;
-						}else if(isOperador(linha.at(indexador))){
-							estado = 8;
-						}
-						indexador++;
-					}
-
-					break;
-				case 7:
-					while(indexador < linha.size() && (linha.at(indexador) == ' ' || isNumero(linha.at(indexador)))){
-						indexador++;
-					}
-					if(indexador < linha.size()){
-						if(linha.at(indexador) == '+' || linha.at(indexador) == '-' || linha.at(indexador) == '*'){
-							indexador++;
-							estado = 6;
-						}else if(linha.at(indexador) == '/'){
-							indexador++;
-							estado = 10;
-						}else{
-							indexador++;
-							estado = 7;
-						}
-					}
-					break;
-				case 8:
-					if(indexador >= linha.size()){
-						estado = 8;
-					}
-					else if(linha.at(indexador) == ' '){
-						indexador++;
-						estado = 6;
-					}else if(linha.at(indexador) == '/'){
-						indexador++;
-						estado = 1;
-					}else if(isOperador(linha.at(indexador))){
-						indexador++;
-						estado = 9;
-					}else if(isNumero(linha.at(indexador)) || isLetra(linha.at(indexador))){
-						estado = 7;
-						indexador++;
-					}
-					break;
-				case 9:
-					if(isLetra(linha.at(indexador)) || isNumero(linha.at(indexador))){
-						indexador++;
+					if(linha.at(indexador) == '*'){
 						estado = 7;
 					}else{
-						indexador++;
-						estado = 5;
+						estado = 6;
 					}
+					indexador++;
+					break;
+				case 7:
+					if(linha.at(indexador) == '*'){
+						estado = 7;
+					}else if(linha.at(indexador) == '/'){
+						estado = 8;
+					}else{
+						estado = 6;
+					}
+					indexador++;
+					break;
+				case 8:
+					if(linha.at(indexador) == '/'){
+						estado = 5;
+					}else if(linha.at(indexador) == ' '){
+						estado = 9;
+					}else if(linha.at(indexador) == '='){
+						estado = 10;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 9:
+					if(linha.at(indexador) == ' '){
+						estado = 9;
+					}else if(linha.at(indexador) == '/'){
+						estado = 5;
+					}else if(linha.at(indexador) == '='){
+						estado = 10;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
 					break;
 				case 10:
 					if(linha.at(indexador) == ' '){
-						indexador++;
-					}else if(isLetra(linha.at(indexador)) || isNumero(linha.at(indexador))){
-						indexador++;
-						estado = 11;
+						estado = 10;
+					}else if(isLetra(linha.at(indexador))){
+						estado = 15;
+					}else if(isNumero(linha.at(indexador))){
+						estado = 17;
 					}else if(linha.at(indexador) == '/'){
-						indexador++;
-						estado = 4;
-					}else if(linha.at(indexador) == '*'){
-						indexador++;
-						estado = 2;
+						estado = 11;
 					}else{
-						indexador++;
-						estado = 5;
+						estado = ERRO;
 					}
+					indexador++;
 					break;
 				case 11:
-					if(linha.at(indexador) == ' '){
-						indexador++;
+					if(linha.at(indexador) == '*'){
+						estado = 12;
 					}else if(linha.at(indexador) == '/'){
-						estado = 1;
-						indexador++;
-					}else if(isOperador(linha.at(indexador))){
-						estado = 6;
-						indexador++;
+						estado = 25;
+					}else{
+						estado = ERRO;
 					}
+					indexador++;
 					break;
-
+				case 12:
+					if(linha.at(indexador) == '*'){
+						estado = 13;
+					}else{
+						estado = 12;
+					}
+					indexador++;
+					break;
+				case 13:
+					if(linha.at(indexador) == '*'){
+						estado = 13;
+					}else if(linha.at(indexador) == '/'){
+						estado = 14;
+					}else{
+						estado = 12;
+					}
+					indexador++;
+					break;
+				case 14:
+					if(linha.at(indexador) == '/'){
+						estado = 11;
+					}else if(isLetra(linha.at(indexador))){
+						estado = 15;
+					}else if(linha.at(indexador) == ' '){
+						estado = 10;
+					}else if(isNumero(linha.at(indexador))){
+						estado = 17;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 15:
+					if(isLetra(linha.at(indexador)) || isNumero(linha.at(indexador))){
+						estado = 15;
+					}else if(linha.at(indexador) == ' '){
+						estado = 16;
+					}else if(linha.at(indexador) == '/'){
+						estado = 24;
+					}else if(isOperador(linha.at(indexador))){
+						estado = 18;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 16:
+					if(isOperador(linha.at(indexador))){
+						estado = 18;
+					}else if(linha.at(indexador) == ' '){
+						estado = 16;
+					}else if(linha.at(indexador) == '/'){
+						estado = 24;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 17:
+					if(isNumero(linha.at(indexador)) || isLetra(linha.at(indexador))){
+						estado = 17;
+					}else if(isOperador(linha.at(indexador))){
+						estado = 18;
+					}else if(linha.at(indexador) == ' '){
+						estado = 16;
+					}else if(linha.at(indexador) == '/'){
+						estado = 24;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 18:
+					if(linha.at(indexador) == '/'){
+						estado = 21;
+					}else if(linha.at(indexador) == ' '){
+						estado = 10;
+					}else if(isLetra(linha.at(indexador))){
+						estado = 15;
+					}else if(isNumero(linha.at(indexador))){
+						estado = 17;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 19:
+					if(linha.at(indexador) == '*'){
+						estado = 20;
+					}else{
+						estado = 19;
+					}
+					indexador++;
+					break;
+				case 20:
+					if(linha.at(indexador) == '*'){
+						estado = 20;
+					}else if(linha.at(indexador) == '/'){
+						estado = 16;
+					}else{
+						estado = 19;
+					}
+					indexador++;
+					break;
+				case 21:
+					if(linha.at(indexador) == '*'){
+						estado = 22;
+					}else if(linha.at(indexador) == '/'){
+						estado = 25;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 22:
+					if(linha.at(indexador) == '*'){
+						estado = 23;
+					}else{
+						estado = 22;
+					}
+					indexador++;
+					break;
+				case 23:
+					if(linha.at(indexador) == '*'){
+						estado = 23;
+					}else if(linha.at(indexador) == '/'){
+						estado = 18;
+					}else{
+						estado = 22;
+					}
+					indexador++;
+					break;
+				case 24:
+					if(linha.at(indexador) == '*'){
+						estado = 19;
+					}else if(linha.at(indexador) == '/'){
+						estado = 25;
+					}else{
+						estado = ERRO;
+					}
+					indexador++;
+					break;
+				case 25:
+					indexador++;
+					break;
 				};
 			}
 			return estado;
 		}
 };
-
 #endif /* ANALISADOR_LEXICO_H_ */
